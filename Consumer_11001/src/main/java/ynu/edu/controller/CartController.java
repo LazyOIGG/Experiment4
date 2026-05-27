@@ -6,12 +6,8 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.annotation.Resource;
 
 import org.springframework.web.bind.annotation.*;
-import ynu.edu.entity.Cart;
 import ynu.edu.entity.User;
 import ynu.edu.feign.UserService;
-
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequestMapping("/cart")

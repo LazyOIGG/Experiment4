@@ -1,0 +1,34 @@
+server:
+  port: 13000
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: "${spring.cloud.client.ip-address}:${server.port}"
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 15
+  client:
+    service-url:
+      defaultZone: "http://eurekaService19000:19000/eureka/, http://eurekaService19001:19001/eureka/, http://eurekaService19002:19002/eureka/"
+
+spring:
+  application:
+    name: "gateway-server"
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: consumer-service-route
+              uri: lb://consumer-service
+              predicates:
+                - Path=/consumer/**
+              filters:
+                - StripPrefix=1
+            - id: provider-service-route
+              uri: lb://provider-service
+              predicates:
+                - Path=/provider/**
+              filters:
+                - StripPrefix=1
+
