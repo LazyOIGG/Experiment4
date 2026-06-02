@@ -4,16 +4,16 @@
 
 ## 技术栈
 
-| 组件 | 版本 |
-|------|------|
-| Java | 17 |
-| Spring Boot | 4.0.3 |
-| Spring Cloud | 2025.1.1 |
-| Spring Cloud Gateway | (managed by Spring Cloud BOM) |
-| Spring Cloud Netflix Eureka | — |
-| Spring Cloud OpenFeign | — |
-| Resilience4j | (managed by Spring Cloud BOM) |
-| JMeter | 5.6.3 |
+| 组件                          | 版本                            |
+|-----------------------------|-------------------------------|
+| Java                        | 17                            |
+| Spring Boot                 | 4.0.3                         |
+| Spring Cloud                | 2025.1.1                      |
+| Spring Cloud Gateway        | (managed by Spring Cloud BOM) |
+| Spring Cloud Netflix Eureka | —                             |
+| Spring Cloud OpenFeign      | —                             |
+| Resilience4j                | (managed by Spring Cloud BOM) |
+| JMeter                      | 5.6.3                         |
 
 ## 模块架构
 
@@ -41,8 +41,8 @@ spring-boot-starter-aop                                <!-- AOP 支持 -->
 
 ### 动态路由配置
 
-| 路由 ID | URI | Predicates | Filters |
-|---------|-----|------------|---------|
+| 路由 ID                  | URI                     | Predicates          | Filters                       |
+|------------------------|-------------------------|---------------------|-------------------------------|
 | consumer-service-route | `lb://consumer-service` | `Path=/consumer/**` | StripPrefix=1, CircuitBreaker |
 | provider-service-route | `lb://provider-service` | `Path=/provider/**` | StripPrefix=1, CircuitBreaker |
 
@@ -60,21 +60,21 @@ spring-boot-starter-aop                                <!-- AOP 支持 -->
 })
 ```
 
-| 服务 | 实例数 | 策略 |
-|------|--------|------|
+| 服务               | 实例数               | 策略 |
+|------------------|-------------------|----|
 | provider-service | 15001/15002/15003 | 随机 |
-| consumer-service | 11001/11002 | 随机 |
+| consumer-service | 11001/11002       | 随机 |
 
 ### 全局认证过滤器
 
 过滤器类：`filter/AuthGlobalFilter.java`
 
-| 条件 | 结果 |
-|------|------|
-| 请求路径包含 `/login` | 放行，不验证 Token |
-| 没有 Token | 返回 401 Unauthorized |
-| Token 错误 | 返回 403 Forbidden |
-| Token 正确 (`my-token-123`) | 放行，继续转发 |
+| 条件                        | 结果                  |
+|---------------------------|---------------------|
+| 请求路径包含 `/login`           | 放行，不验证 Token        |
+| 没有 Token                  | 返回 401 Unauthorized |
+| Token 错误                  | 返回 403 Forbidden    |
+| Token 正确 (`my-token-123`) | 放行，继续转发             |
 
 ### 全局跨域配置
 
@@ -93,17 +93,17 @@ globalcors:
 
 #### 熔断器 CircuitBreaker
 
-| 实例 | 失败率阈值 | 滑动窗口 | 等待时间 | 半开许可 |
-|------|-----------|----------|----------|----------|
-| gateway-breaker | 50% | 10次 | 10s | 3 |
+| 实例              | 失败率阈值 | 滑动窗口 | 等待时间 | 半开许可 |
+|-----------------|-------|------|------|------|
+| gateway-breaker | 50%   | 10次  | 10s  | 3    |
 
 > 当下游服务失败率超过 50%，断路器打开，请求转发到 `/fallback` 降级接口。
 
 #### 限流器 RateLimiter
 
 | 时间窗口 | 每窗口请求数 | 超时策略 |
-|----------|-------------|----------|
-| 2s | 5 | 立即拒绝 |
+|------|--------|------|
+| 2s   | 5      | 立即拒绝 |
 
 > 超过每 2 秒 5 个请求的限制，返回 429 Too Many Requests。
 
@@ -125,11 +125,11 @@ globalcors:
 
 ### 线程组概览
 
-| 线程组 | 测试目标 | 并发策略 | 预期结果 |
-|--------|----------|----------|----------|
-| **1-熔断器测试** | Gateway熔断器 | 30线程×10循环 | 下游服务异常时触发熔断降级 |
-| **2-限流器测试** | Gateway限流器 | 20线程集合点×1 | 超过5个请求返回429 |
-| **3-过滤器测试** | 认证过滤器 | 10线程×1 | 无Token返回401，有Token返回200 |
+| 线程组         | 测试目标       | 并发策略      | 预期结果                    |
+|-------------|------------|-----------|-------------------------|
+| **1-熔断器测试** | Gateway熔断器 | 30线程×10循环 | 下游服务异常时触发熔断降级           |
+| **2-限流器测试** | Gateway限流器 | 20线程集合点×1 | 超过5个请求返回429             |
+| **3-过滤器测试** | 认证过滤器      | 10线程×1    | 无Token返回401，有Token返回200 |
 
 ### 运行前提
 
