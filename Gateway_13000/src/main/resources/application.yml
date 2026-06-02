@@ -25,10 +25,53 @@ spring:
                 - Path=/consumer/**
               filters:
                 - StripPrefix=1
+                - name: CircuitBreaker
+                  args:
+                    name: gateway-breaker
+                    fallbackUri: forward:/fallback
             - id: provider-service-route
               uri: lb://provider-service
               predicates:
                 - Path=/provider/**
               filters:
                 - StripPrefix=1
+                - name: CircuitBreaker
+                  args:
+                    name: gateway-breaker
+                    fallbackUri: forward:/fallback
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: "*"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders: "*"
+                allowCredentials: false
+                maxAge: 3600
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+    instances:
+      gateway-breaker:
+        base-config: default
+  ratelimiter:
+    configs:
+      default:
+        limit-refresh-period: 2s
+        limit-for-period: 5
+        timeout-duration: 0s
+    instances:
+      gateway-ratelimiter:
+        base-config: default
 
